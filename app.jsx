@@ -1596,6 +1596,7 @@ GPS: lat: ${newBooking.lat}, lon: ${newBooking.lon}`,
 };
 
 
+
 // Render aplikace
 const root = createRoot(document.getElementById('root'));
 root.render(React.createElement(KominikReservation));
