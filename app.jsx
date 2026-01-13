@@ -357,6 +357,15 @@ const KominikReservation = () => {
           const startDate = start.toISOString().split('T')[0];
           const endDate = end.toISOString().split('T')[0];
           
+          console.log('🔎 Kontrola vícedenní události:', {
+            název: event.summary,
+            startDateTime: event.start.dateTime,
+            endDateTime: event.end.dateTime,
+            startDate: startDate,
+            endDate: endDate,
+            isMultiDay: startDate !== endDate
+          });
+          
           if (startDate !== endDate) {
             // VÍCEDENNÍ ČASOVÁ UDÁLOST - blokuj všechny dny
             console.log('⚠️ Vícedenní událost:', event.summary, 'od', startDate, 'do', endDate);
@@ -1448,7 +1457,7 @@ GPS: lat: ${newBooking.lat}, lon: ${newBooking.lon}`,
                             ? 'bg-green-100 text-green-800 hover:bg-green-200'
                             : day.hasSlots
                             ? 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                            : 'bg-white text-gray-300 cursor-not-allowed'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
                         }`}
                       >
                         {day.day}
