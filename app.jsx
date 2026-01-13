@@ -1,6 +1,7 @@
 const { useState, useEffect } = React;
 const { createRoot } = ReactDOM;
 
+
 // Lucide Icons jako inline komponenty
 const Calendar = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -269,14 +270,19 @@ const KominikReservation = () => {
   
   // Načtení rezervací z Google Calendar
   const loadCalendarEvents = () => {
+    console.log('🔄 Zahajuji načítání událostí z Google Calendar...');
+    
     if (!window.gapi || !window.gapi.client || !window.gapi.client.calendar) {
-      console.error('Google Calendar API not loaded');
+      console.error('❌ Google Calendar API not loaded');
+      alert('Google Calendar API není načteno. Zkuste refreshnout stránku.');
       return;
     }
     
     const timeMin = new Date();
     const timeMax = new Date();
     timeMax.setDate(timeMax.getDate() + 60); // 60 dní dopředu
+    
+    console.log('📅 Načítám události od', timeMin.toISOString(), 'do', timeMax.toISOString());
     
     window.gapi.client.calendar.events.list({
       calendarId: 'primary',
@@ -1094,9 +1100,20 @@ GPS: lat: ${newBooking.lat}, lon: ${newBooking.lon}`,
           )}
           
           {isGoogleAuthorized && (
-            <div className="mt-4 flex items-center justify-center gap-2 text-green-600">
-              <Check className="w-5 h-5" />
-              <span className="text-sm font-semibold">Google Calendar připojen</span>
+            <div className="mt-4 flex items-center justify-center gap-4">
+              <div className="flex items-center gap-2 text-green-600">
+                <Check className="w-5 h-5" />
+                <span className="text-sm font-semibold">Google Calendar připojen</span>
+              </div>
+              <button
+                onClick={() => {
+                  console.log('🔄 Manuální reload událostí...');
+                  loadCalendarEvents();
+                }}
+                className="text-sm text-blue-600 hover:text-blue-800 underline"
+              >
+                🔄 Načíst události
+              </button>
             </div>
           )}
         </div>
