@@ -337,7 +337,7 @@ const KominikReservation = () => {
             currentDate.setDate(currentDate.getDate() + 1);
           }
         } else {
-          // ČASOVÁ UDÁLOST - normální zpracování
+          // ČASOVÁ UDÁLOST
           const start = new Date(event.start.dateTime);
           const end = new Date(event.end.dateTime);
           const duration = Math.round((end - start) / 60000); // minuty
@@ -353,16 +353,74 @@ const KominikReservation = () => {
             }
           }
           
-          bookingsFromCalendar.push({
-            date: start.toISOString().split('T')[0],
-            time: start.toTimeString().slice(0, 5),
-            address: event.location || 'Neznámá adresa',
-            lat: lat,
-            lon: lon,
-            duration: duration,
-            customerName: event.summary || 'Rezervace',
-            googleEventId: event.id
-          });
+          // Kontrola jestli událost trvá přes více dní
+          const startDate = start.toISOString().split('T')[0];
+          const endDate = end.toISOString().split('T')[0];
+          
+          if (startDate !== endDate) {
+            // VÍCEDENNÍ ČASOVÁ UDÁLOST - blokuj všechny dny
+            console.log('⚠️ Vícedenní událost:', event.summary, 'od', startDate, 'do', endDate);
+            
+            const currentDate = new Date(start);
+            currentDate.setHours(0, 0, 0, 0);
+            const finalDate = new Date(end);
+            finalDate.setHours(0, 0, 0, 0);
+            
+            while (currentDate <= finalDate) {
+              const dateStr = currentDate.toISOString().split('T')[0];
+              
+              // První den - blokuj od času startu do konce dne
+              // Poslední den - blokuj od začátku dne do času konce
+              // Prostřední dny - blokuj celý pracovní den
+              
+              let blockStart, blockDuration;
+              if (dateStr === startDate) {
+                // První den
+                blockStart = start.toTimeString().slice(0, 5);
+                const endOfDay = new Date(currentDate);
+                endOfDay.setHours(17, 0, 0, 0); // Konec pracovního dne
+                blockDuration = Math.round((endOfDay - start) / 60000);
+              } else if (dateStr === endDate) {
+                // Poslední den
+                blockStart = '08:00';
+                const startOfDay = new Date(currentDate);
+                startOfDay.setHours(8, 0, 0, 0);
+                blockDuration = Math.round((end - startOfDay) / 60000);
+              } else {
+                // Prostřední dny - celý pracovní den
+                blockStart = '08:00';
+                blockDuration = 540; // 9 hodin (8:00-17:00)
+              }
+              
+              bookingsFromCalendar.push({
+                date: dateStr,
+                time: blockStart,
+                address: event.summary || 'Blokováno',
+                lat: lat,
+                lon: lon,
+                duration: Math.max(0, blockDuration),
+                customerName: event.summary || 'Vícedenní událost',
+                googleEventId: event.id,
+                isMultiDayBlock: true
+              });
+              
+              console.log('✅ Vytvořena blokace pro:', dateStr, event.summary, blockStart, '(', blockDuration, 'min)');
+              
+              currentDate.setDate(currentDate.getDate() + 1);
+            }
+          } else {
+            // JEDNODENNÍ ČASOVÁ UDÁLOST - normální zpracování
+            bookingsFromCalendar.push({
+              date: startDate,
+              time: start.toTimeString().slice(0, 5),
+              address: event.location || 'Neznámá adresa',
+              lat: lat,
+              lon: lon,
+              duration: duration,
+              customerName: event.summary || 'Rezervace',
+              googleEventId: event.id
+            });
+          }
         }
       });
       
