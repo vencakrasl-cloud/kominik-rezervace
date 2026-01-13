@@ -287,12 +287,21 @@ const KominikReservation = () => {
     }).then(response => {
       const events = response.result.items || [];
       
+      console.log('📅 NAČTENO UDÁLOSTÍ Z KALENDÁŘE:', events.length);
+      
       // Převeď Google Calendar události na formát aplikace
       const bookingsFromCalendar = [];
       
       events.forEach(event => {
         // Kontrola zda je to celodenní událost
         const isAllDay = !event.start.dateTime;
+        
+        console.log('🔍 Událost:', {
+          název: event.summary,
+          isAllDay: isAllDay,
+          start: event.start,
+          end: event.end
+        });
         
         if (isAllDay) {
           // CELODENNÍ UDÁLOST - blokuj všechny časy ten den
@@ -316,6 +325,8 @@ const KominikReservation = () => {
               googleEventId: event.id,
               isAllDayBlock: true
             });
+            
+            console.log('✅ Vytvořena blokace pro:', dateStr, event.summary);
             
             currentDate.setDate(currentDate.getDate() + 1);
           }
@@ -348,6 +359,9 @@ const KominikReservation = () => {
           });
         }
       });
+      
+      console.log('✅ CELKEM VYTVOŘENO REZERVACÍ:', bookingsFromCalendar.length);
+      console.log('📋 Rezervace:', bookingsFromCalendar);
       
       setBookings(bookingsFromCalendar);
       // Ulož i do localStorage jako backup
