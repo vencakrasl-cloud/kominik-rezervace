@@ -941,7 +941,15 @@ const KominikReservation = () => {
           });
         } else {
           // Přidej blokovaný slot s důvodem
-          const blockMessage = conflictCheck.message || 'Nedostatečný čas pro přejezd';
+          let blockMessage;
+          if (conflictCheck.reason === 'time_overlap') {
+            blockMessage = 'Obsazený termín';
+          } else if (conflictCheck.reason === 'travel_before' || conflictCheck.reason === 'travel_after') {
+            blockMessage = 'Nedostatečný čas pro přejezd';
+          } else {
+            blockMessage = 'Obsazeno';
+          }
+          
           blockedSlots.push({
             date: dateStr,
             time: time,
@@ -1450,6 +1458,7 @@ GPS: lat: ${newBooking.lat}, lon: ${newBooking.lon}`,
                       <button
                         onClick={() => day.hasSlots && setFormData({...formData, selectedDate: day.dateStr, selectedTime: null})}
                         disabled={!day.hasSlots}
+                        style={!day.hasSlots ? {pointerEvents: 'none'} : {}}
                         className={`w-full aspect-square rounded-lg text-sm font-medium transition ${
                           formData.selectedDate === day.dateStr
                             ? 'bg-orange-600 text-white'
@@ -1457,7 +1466,7 @@ GPS: lat: ${newBooking.lat}, lon: ${newBooking.lon}`,
                             ? 'bg-green-100 text-green-800 hover:bg-green-200'
                             : day.hasSlots
                             ? 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
+                            : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                         }`}
                       >
                         {day.day}
@@ -1492,7 +1501,7 @@ GPS: lat: ${newBooking.lat}, lon: ${newBooking.lon}`,
                         }`}
                       >
                         {slot.time}
-                        {slot.blocked && <span className="block text-xs mt-1">Nedostatečný čas pro přejezd</span>}
+                        {slot.blocked && <span className="block text-xs mt-1">{slot.blockReason || 'Obsazeno'}</span>}
                         {!slot.blocked && slot.optimal && <span className="block text-xs">✓ Optimální</span>}
                       </button>
                     ))}
