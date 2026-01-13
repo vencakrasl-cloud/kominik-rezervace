@@ -1,5 +1,3 @@
-const { useState, useEffect } = React;
-const { createRoot } = ReactDOM;
 
 const { useState, useEffect } = React;
 const { createRoot } = ReactDOM;
