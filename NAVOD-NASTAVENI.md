@@ -99,7 +99,7 @@ Vytvořeno	Datum	Čas	Jméno	Telefon	Email	Adresa	Komíny	Krb	Poznámka	Lat	Lon	
    | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O |
    |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
    | [nechte prázdné] | 2026-01-20 | 10:00 | Jan Testovací | 123456789 | test@test.cz | Děčín | 1 | Ne | Test | 50.7821 | 14.2148 | 45 | Čeká na přidání | |
-
+20
 2. Počkejte **1 minutu**
 3. Zkontrolujte:
    - Sloupec **N (Status)** by měl být: `Přidáno do kalendáře`
