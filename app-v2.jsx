@@ -69,7 +69,7 @@ const AlertCircle = () => (
 );
 
 // Google Sheets konfigurace pro rezervace
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzTmLczHCDXb97IQS9yTU74hffLeiU0IKNgT50JhV5wvLKhk7cqYnQ-gJWnPoybCIuo/exec';
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwehJ0AZlb1NjC9Wesb221eAAsmxapkDqLuHlzq7mbVgtSNMrBQ4fd83z1utPeJP-rd/exec';
 
 // Google Calendar API konfigurace (jen pro ČTENÍ událostí)
 const GOOGLE_CLIENT_ID = '906589944502-45phnl4plesvc97b227nprn4rbckfkhg.apps.googleusercontent.com';
